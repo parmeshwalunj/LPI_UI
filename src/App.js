@@ -19,22 +19,30 @@ function App() {
   
   return (
     <>
-      <table class="table">
+      <table class="table" style={{
+                        padding: '50px',
+                      }}>
       <thead>
         <tr>
           {/* <th scope="col">#</th> */}
+          <th scope="col">Location</th>
           <th scope="col">Images</th>
           <th scope="col">Number</th>
-          <th scope="col">TimeStamp</th>
+          <th scope="col" style={{
+                        textAlign:"right"
+                      }}>TimeStamp</th>
         </tr>
       </thead>
       <tbody>
         {messages && messages.map(msg => 
         <tr>
           {/* <th scope="row">1</th> */}
-          <td><img src={msg.image} /></td>
+          <td>{msg.location}</td>
+          <td><img src={msg.image} height="70" width="140"/></td>
           <td>{msg.plate}</td>
-          <td>{msg.time}</td>
+          <td style={{
+                        textAlign:"right"
+                      }}>{msg.time}</td>
         </tr>
         )}
       </tbody>
