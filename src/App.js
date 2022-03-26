@@ -19,17 +19,25 @@ function App() {
   
   return (
     <>
-      <table class="table" style={{
+    <div>
+      <table class="table table-hover" style={{
                         padding: '50px',
                       }}>
-      <thead>
-        <tr>
+      <thead class="table-dark">
+        <tr style={{height: '50px'}}>
           {/* <th scope="col">#</th> */}
-          <th scope="col">Location</th>
-          <th scope="col">Images</th>
-          <th scope="col">Number</th>
+          <th scope="col" style={{lineHeight:'3'}}>Location</th>
           <th scope="col" style={{
-                        textAlign:"right"
+                        textAlign:"center",
+                        lineHeight:'3'
+                      }}>Images</th>
+          <th scope="col" style={{
+                        textAlign:"center",
+                        lineHeight:'3'
+                      }}>Number</th>
+          <th scope="col" style={{
+                        textAlign:"right",
+                        lineHeight:'3'
                       }}>TimeStamp</th>
         </tr>
       </thead>
@@ -37,16 +45,26 @@ function App() {
         {messages && messages.map(msg => 
         <tr>
           {/* <th scope="row">1</th> */}
-          <td>{msg.location}</td>
-          <td><img src={msg.image} height="70" width="140"/></td>
-          <td>{msg.plate}</td>
           <td style={{
-                        textAlign:"right"
-                      }}>{msg.time}</td>
+                        lineHeight:'4'
+                      }}>{msg.location}</td>
+          <td style={{
+                        textAlign:"center",
+                        lineHeight:'4'
+                      }}><img src={msg.image} height="70" width="140"/></td>
+          <td style={{
+                        textAlign:"center",
+                        lineHeight:'4'
+                      }}>{msg.plate}</td>
+          <td style={{
+                        textAlign:"right",
+                        lineHeight:'4'
+                      }}>{msg.time.slice(0,19)}</td>
         </tr>
         )}
       </tbody>
     </table>
+    </div>
     </>
   );
 }
