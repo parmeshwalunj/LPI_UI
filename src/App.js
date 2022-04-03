@@ -1,72 +1,143 @@
 import "./App.css";
-import React from "react";
-import ResultsTable from "./components/Table";
-import { db } from "./Firebase";
+import { app, auth } from "./Firebase";
+import Login from "./components/Login";
 import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  orderBy,
-} from "firebase/firestore";
-import { useCollectionData } from 'react-firebase-hooks/firestore';
-  
-function App() {
-  const q = query(collection(db, "test4"), orderBy("time", "desc"));
-  
-  const [messages] = useCollectionData(q, { idField: 'id' });
-  console.log(messages);
-  
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import React, { useState, useEffect } from "react";
+import Thome from "./components/Thome";
+
+const App = () => {
+  const [user, setUser] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [hasAccount, setHasAccount] = useState(false);
+
+  const clearInputs = () => {
+    setEmail("");
+    setPassword("");
+  };
+
+  const clearErrors = () => {
+    setEmailError("");
+    setPasswordError("");
+  };
+  const handleLogin = () => {
+    clearErrors();
+    signInWithEmailAndPassword(auth, email, password).catch((err) => {
+      switch (err.code) {
+        case "auth/invalid-login":
+        case "auth/user-disabled":
+        case "auth/user-not-found":
+          setEmailError(err.message);
+          break;
+        case "auth/wrong-password":
+          setPasswordError(err.message);
+          break;
+      }
+    });
+  };
+  // const handleLogin = () => {
+  //   clearErrors();
+  //   app
+  //     .auth()
+  //     .signInWithEmailAndPassword(email, password)
+  //     .catch((err) => {
+  //       switch (err.code) {
+  //         case "auth/invalid-login":
+  //         case "auth/user-disabled":
+  //         case "auth/user-not-found":
+  //           setEmailError(err.message);
+  //           break;
+  //         case "auth/wrong-password":
+  //           setPasswordError(err.message);
+  //           break;
+  //       }
+  //     });
+  // };
+
+  // const handleSignup = () => {
+  //   clearErrors();
+  //   app
+  //     .auth()
+  //     .createUserWithEmailAndPassword(email, password)
+  //     .catch((err) => {
+  //       switch (err.code) {
+  //         case "auth/email-already-in-use":
+  //         case "auth/invalid-email":
+  //           setEmailError(err.message);
+  //           break;
+  //         case "auth/weak-password":
+  //           setPasswordError(err.message);
+  //           break;
+  //       }
+  //     });
+  // };
+  const handleSignup = () => {
+    clearErrors();
+    createUserWithEmailAndPassword(auth, email, password).catch((err) => {
+      switch (err.code) {
+        case "auth/email-already-in-use":
+        case "auth/invalid-email":
+          setEmailError(err.message);
+          break;
+        case "auth/weak-password":
+          setPasswordError(err.message);
+          break;
+      }
+    });
+  };
+  const handleLogout = () => {
+    signOut(auth);
+  };
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      clearInputs();
+      setUser(user);
+    } else {
+      setUser("");
+    }
+  });
+  // const authListener = () => {
+  //   app.auth().onAuthStateChanged((user) => {
+  //     if (user) {
+  //       clearInputs();
+  //       setUser(user);
+  //     } else {
+  //       setUser("");
+  //     }
+  //   });
+  // };
+  // useEffect(() => {
+  //   authListener();
+  // }, []);
   return (
-    <>
-    <div>
-      <table class="table table-hover" style={{
-                        padding: '50px',
-                      }}>
-      <thead class="table-dark">
-        <tr style={{height: '50px'}}>
-          {/* <th scope="col">#</th> */}
-          <th scope="col" style={{lineHeight:'3'}}>Location</th>
-          <th scope="col" style={{
-                        textAlign:"center",
-                        lineHeight:'3'
-                      }}>Images</th>
-          <th scope="col" style={{
-                        textAlign:"center",
-                        lineHeight:'3'
-                      }}>Number</th>
-          <th scope="col" style={{
-                        textAlign:"right",
-                        lineHeight:'3'
-                      }}>TimeStamp</th>
-        </tr>
-      </thead>
-      <tbody>
-        {messages && messages.map(msg => 
-        <tr>
-          {/* <th scope="row">1</th> */}
-          <td style={{
-                        lineHeight:'4'
-                      }}>{msg.location}</td>
-          <td style={{
-                        textAlign:"center",
-                        lineHeight:'4'
-                      }}><img src={msg.image} height="70" width="140"/></td>
-          <td style={{
-                        textAlign:"center",
-                        lineHeight:'4'
-                      }}>{msg.plate}</td>
-          <td style={{
-                        textAlign:"right",
-                        lineHeight:'4'
-                      }}>{msg.time.slice(0,19)}</td>
-        </tr>
-        )}
-      </tbody>
-    </table>
+    <div className="App">
+      {user ? (
+        <Thome 
+        email={user.email} 
+        handleLogout={handleLogout} />
+      ) : (
+        <Login
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          handleLogin={handleLogin}
+          handleSignup={handleSignup}
+          hasAccount={hasAccount}
+          setHasAccount={setHasAccount}
+          emailError={emailError}
+          passwordError={passwordError}
+        />
+      )}
     </div>
-    </>
   );
-}
+};
 
 export default App;
