@@ -2,6 +2,7 @@ import React,{ useState} from "react";
 import Data from "../Data";
 import BootstrapSwitchButton from 'bootstrap-switch-button-react';
 import axios from "axios";
+import Dropdown from 'react-bootstrap/Dropdown';
 
 const apiUrl = "http://localhost:8080/api/tasks";
 
@@ -9,7 +10,6 @@ const apiUrl = "http://localhost:8080/api/tasks";
 const Thome = ({email, handleLogout}) => {
   const [language,setLanguage] = useState({});
   const [start, setStart] = useState(false);
-  
   function addTask(task) {
     console.log("clicked");
     setStart(!start)
@@ -38,7 +38,25 @@ const Thome = ({email, handleLogout}) => {
               </button>
             </>
           )}
-        <BootstrapSwitchButton
+      <Dropdown >
+        <Dropdown.Toggle variant="secondary" >
+          language
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item href="#" onClick={(checked: boolean) => {
+                setLanguage({})
+            }} >
+            English
+          </Dropdown.Item>
+          <Dropdown.Item href="#" onClick={(checked: boolean) => {
+                setLanguage({ isMarathi: checked })
+            }} >
+            Marathi
+          </Dropdown.Item>
+          
+        </Dropdown.Menu>
+      </Dropdown>
+        {/* <BootstrapSwitchButton
             width={100} height={40}
             checked={false}
             onlabel='Marathi'
@@ -46,7 +64,7 @@ const Thome = ({email, handleLogout}) => {
             onChange={(checked: boolean) => {
                 setLanguage({ isMarathi: checked })
             }}
-        />
+        /> */}
         
         {language.isMarathi ? (
         <button onClick={handleLogout}>लॉग आउट</button>
