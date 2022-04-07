@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import React, { useState, useEffect } from "react";
 import Thome from "./components/Thome";
+import useGeoLocation from "./hooks/useGeoLocation";
 
 const App = () => {
   const [user, setUser] = useState("");
@@ -17,7 +18,7 @@ const App = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [hasAccount, setHasAccount] = useState(false);
-
+  const location = useGeoLocation();
   const clearInputs = () => {
     setEmail("");
     setPassword("");
@@ -118,24 +119,33 @@ const App = () => {
   // }, []);
   return (
     <div className="App">
-      {user ? (
-        <Thome 
-        email={user.email} 
-        handleLogout={handleLogout} />
-      ) : (
-        <Login
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-          handleLogin={handleLogin}
-          handleSignup={handleSignup}
-          hasAccount={hasAccount}
-          setHasAccount={setHasAccount}
-          emailError={emailError}
-          passwordError={passwordError}
-        />
-      )}
+      {
+        location.loaded ? (
+          user ? (
+            <>
+            {/* <marquee>{JSON.stringify(location)}</marquee> */}
+            <Thome email={user.email} handleLogout={handleLogout} />
+            </>
+          ) : (
+            <>
+            <Login
+              email={email}
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              handleLogin={handleLogin}
+              handleSignup={handleSignup}
+              hasAccount={hasAccount}
+              setHasAccount={setHasAccount}
+              emailError={emailError}
+              passwordError={passwordError}
+            />
+            </>
+          )
+        ):(
+          <h1>To proceed Allow location access.</h1>
+        )
+      }
     </div>
   );
 };
